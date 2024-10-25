@@ -1,7 +1,6 @@
 import { app, BrowserWindow } from "electron";
 import { fileURLToPath } from "url";
 import path from "path";
-import { spawn } from "child_process";
 import fs from "fs";
 
 const isDev = process.env.NODE_ENV === "development";
@@ -9,36 +8,20 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const RootDir = path.join(__dirname, "../../");
 
-const logDir = path.join(RootDir, "logs/back");
-if (!fs.existsSync(logDir)) {
-  fs.mkdirSync(logDir, { recursive: true });
+// Logging
+const logDir = path.join(RootDir, "logs");
+const frontendLogDir = path.join(logDir, "front");
+
+if (!fs.existsSync(frontendLogDir)) {
+  fs.mkdirSync(frontendLogDir, { recursive: true });
 }
-const backendLog = fs.createWriteStream(path.join(logDir, "log.log"), {
-  flags: "w",
-});
 
-function startBackend() {
-  const pythonProcess = spawn("python", ["main.py"], {
-    cwd: RootDir,
-    stdio: ["ignore", "pipe", "pipe"],
-  });
-
-  pythonProcess.stdout.on("data", (data) => {
-    backendLog.write(`[STDOUT] ${data}\n`);
-  });
-
-  pythonProcess.stderr.on("data", (data) => {
-    backendLog.write(`[STDERR] ${data}\n`);
-  });
-
-  pythonProcess.on("error", (error) => {
-    backendLog.write(`[ERROR] Failed to start FastAPI server: ${error}\n`);
-  });
-
-  pythonProcess.on("exit", (code) => {
-    backendLog.write(`[INFO] FastAPI server exited with code: ${code}\n`);
-  });
-}
+const frontendLog = fs.createWriteStream(
+  path.join(frontendLogDir, "electron.log"),
+  {
+    flags: "w",
+  }
+);
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
@@ -53,12 +36,13 @@ function createWindow() {
   if (isDev) {
     mainWindow.loadURL("http://localhost:5173");
   } else {
-    mainWindow.loadFile(path.join(RootDir, "front/dist/index.html"));
+    frontendLog.write(`[EL] Unsupported run mode\n`);
+    app.quit();
   }
 }
 
 app.whenReady().then(() => {
-  startBackend();
+  frontendLog.write(`[EL] Electron started\n`);
   createWindow();
 
   app.on("activate", () => {
@@ -66,8 +50,10 @@ app.whenReady().then(() => {
   });
 });
 
+// Handle application exit
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
+    frontendLog.write(`[EL] Electron terminated\n`);
     app.quit();
   }
 });

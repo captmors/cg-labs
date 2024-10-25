@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from utils.kernels import DEFAULT_KERNEL
+from ..utils.kernels import DEFAULT_KERNEL
 
 def median_filter(image: np.ndarray, kernel: np.ndarray = DEFAULT_KERNEL) -> np.ndarray:
     """

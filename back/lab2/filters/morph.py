@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from utils.kernels import DEFAULT_KERNEL, Kernels
+from ..utils.kernels import DEFAULT_KERNEL
 
 # Чернит белые 
 def erosion(image: np.ndarray, kernel: np.ndarray = DEFAULT_KERNEL) -> np.ndarray:

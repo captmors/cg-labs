@@ -1,8 +1,8 @@
 import { ChakraProvider, Flex, Box, defaultSystem } from '@chakra-ui/react';
-import Sidebar from './components/lab2/Sidebar'
+import Sidebar from './components/Sidebar'
 import { useState } from 'react'
-import Lab1Window from './components/lab1/Lab1Window'
-import Lab2Window from './components/lab2/Lab2Window'
+import Lab1Window from './lab1/Lab1Window'
+import Lab2Window from './lab2/Lab2Window'
 
 function App() {
   const [activeTab, setActiveTab] = useState<string>('lab1')
