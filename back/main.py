@@ -19,6 +19,8 @@ logging.basicConfig(
     ]
 )
 
+logging.info("Logging configured")
+
 # fastapi 
 app = FastAPI()
 
@@ -49,10 +51,10 @@ app.include_router(lab2_nonlinear_router)
 app.include_router(lab2_morph_router)
 
 
-## Uncomment if run not from bash 
+# Comment if launch from script
 
-if __name__ == "__main__":
-    logging.info("Starting backend server")
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+# if __name__ == "__main__":
+#     logging.info("Starting backend server")
+#     import uvicorn
+#     uvicorn.run(app, host="0.0.0.0", port=8000)
     

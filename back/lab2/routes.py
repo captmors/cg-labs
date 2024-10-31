@@ -4,8 +4,10 @@ from utils.utils import cleanup_temp_file, process_image
 from .filters.nonlinear import median_filter, min_filter, max_filter
 from .filters.morph import erosion, dilation, opening, closure
 
-nonlinear_router = APIRouter(prefix="/nonlinear", tags=["nonlinear"])
-morph_router = APIRouter(prefix="/morph", tags=["morph"])
+# Set up routers 
+lab_name = "lab2"
+nonlinear_router = APIRouter(prefix=f"/{lab_name}/nonlinear", tags=["nonlinear"])
+morph_router = APIRouter(prefix=f"/{lab_name}/morph", tags=["morph"])
 
 
 # Nonlinear 

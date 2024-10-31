@@ -1,4 +1,5 @@
 tmp/
+!tmp/.pids
 logs/
 build/
 dist/
@@ -7,6 +8,7 @@ main.spec
 requirements.txt
 node_modules
 .dev/
+!.gitkeep
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
