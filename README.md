@@ -21,3 +21,18 @@ cd front
 yarn install
 yarn dev 
 ```
+5. Для запуска 4 лабы: 
+```
+*install vcpkg* 
+
+vcpkg integrate 
+vcpkg install sdl2
+vcpkg install glad
+vcpkg install glm
+
+cd opengl/libs/ 
+git clone https://github.com/nothings/stb.git
+
+*open like CMake project in Visual Studio*
+*build&launch*
+```
