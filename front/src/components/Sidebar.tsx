@@ -23,6 +23,13 @@ function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
         >
           Lab 2
         </Button>
+        <Button
+          w="full"
+          colorScheme={activeTab === 'lab3' ? 'blue' : 'gray'}
+          onClick={() => setActiveTab('lab3')}
+        >
+          Lab 3
+        </Button>
       </VStack>
     </Box>
   )

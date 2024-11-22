@@ -4,10 +4,10 @@ import { TabHeader } from './TabHeader';
 import ImageGallery from './ImageGallery';
 import { ImageDisplay } from './ImageDisplay';
 import { ErrorAlert } from './ErrorAlert';
-import { TabType } from './etc/types';
-import { fetchRawImages } from './etc/api';
-import { ImageData } from './etc/types';
-import { applyImageFilter } from './etc/api'; 
+import { TabType } from './utils/types';
+import { fetchRawImages } from './utils/api';
+import { ImageData } from './utils/types';
+import { applyImageFilter } from './utils/api'; 
 
 const Lab2Window = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);

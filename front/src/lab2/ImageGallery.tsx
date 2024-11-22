@@ -1,5 +1,5 @@
 import { SimpleGrid, Box, Image } from '@chakra-ui/react';
-import { ImageData } from './etc/types';
+import { ImageData } from './utils/types';
 
 interface ImageGalleryProps {
   images: ImageData[];

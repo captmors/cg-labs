@@ -1,6 +1,6 @@
 import { Box, Button, Flex } from '@chakra-ui/react';
-import { TabType } from './etc/types';
-import { MORPH_FUNCTIONS, NONLINEAR_FUNCTIONS } from './etc/constants';
+import { TabType } from './utils/types';
+import { MORPH_FUNCTIONS, NONLINEAR_FUNCTIONS } from './utils/constants';
 
 interface TabHeaderProps {
   activeTab: TabType;
