@@ -1,9 +1,10 @@
 import { Box, Button } from '@chakra-ui/react'
+import { API_BASE_URL } from '../utils/defines';
 
 function Lab1Window() {
   const openTkinterApp = async () => {
     try {
-      const response = await fetch('http://localhost:8000/lab1', {
+      const response = await fetch(`${API_BASE_URL}/lab1`, {
         method: 'POST'
       })
       if (!response.ok) {

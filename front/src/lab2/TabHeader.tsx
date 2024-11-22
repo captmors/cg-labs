@@ -6,16 +6,16 @@ interface TabHeaderProps {
   activeTab: TabType;
   setActiveTab: (tab: TabType) => void;
   selectedFunction: string;
-  handleApplyFilter: () => void;
   handleFunctionSelect: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  isLoading?: boolean;
 }
 
 export const TabHeader: React.FC<TabHeaderProps> = ({
   activeTab,
   setActiveTab,
   selectedFunction,
-  handleApplyFilter,
-  handleFunctionSelect
+  handleFunctionSelect,
+  isLoading = false
 }) => {
   return (
     <Box borderBottom="1px" borderColor="gray.200" p={4}>
@@ -38,17 +38,6 @@ export const TabHeader: React.FC<TabHeaderProps> = ({
             Nonlinear
           </Button>
         </Flex>
-
-        <Flex align="center" gap={4}>
-          <Button
-            size="sm"
-            onClick={handleApplyFilter}
-            disabled={!selectedFunction}
-            colorScheme="blue"
-          >
-            Apply
-          </Button>
-        </Flex>
       </Flex>
 
       <Box mt={4}>
@@ -62,6 +51,7 @@ export const TabHeader: React.FC<TabHeaderProps> = ({
           }}
           onChange={handleFunctionSelect}
           value={selectedFunction}
+          disabled={isLoading}
         >
           <option value="">Select function</option>
           {(activeTab === 'morph' ? MORPH_FUNCTIONS : NONLINEAR_FUNCTIONS).map(func => (

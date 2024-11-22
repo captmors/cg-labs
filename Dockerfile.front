@@ -1,0 +1,17 @@
+FROM node:20-alpine 
+
+WORKDIR /app 
+
+COPY front/package.json ./
+
+RUN corepack enable && corepack prepare yarn@1.22.22 --activate
+
+RUN yarn global add @rollup/rollup-linux-x64-musl
+
+RUN --mount=type=cache,target=/root/.yarn yarn install --optional
+
+COPY front ./ 
+
+EXPOSE 3000 
+
+CMD ["yarn", "run", "dev"]

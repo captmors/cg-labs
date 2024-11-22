@@ -1,6 +1,9 @@
 export interface ImageData {
-  url: string;
   id: number;
+  name: string;
+  blob: Blob;  
+  url: string; 
 }
+
 
 export type TabType = 'morph' | 'nonlinear';

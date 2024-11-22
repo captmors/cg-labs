@@ -3,6 +3,7 @@ import Sidebar from './components/Sidebar'
 import { useState } from 'react'
 import Lab1Window from './lab1/Lab1Window'
 import Lab2Window from './lab2/Lab2Window'
+import Lab3Window from './lab3/Lab3Window';
 
 function App() {
   const [activeTab, setActiveTab] = useState<string>('lab1')
@@ -14,6 +15,7 @@ function App() {
         <Box flex="1" p={4}>
           {activeTab === 'lab1' && <Lab1Window />}
           {activeTab === 'lab2' && <Lab2Window />}
+          {activeTab === 'lab3' && <Lab3Window />}
         </Box>
       </Flex>
     </ChakraProvider>

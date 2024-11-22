@@ -1,12 +1,17 @@
 import { Box, Text } from '@chakra-ui/react';
 
 interface ErrorAlertProps {
-  isVisible: boolean;
+  open: boolean;
+  onClose: () => void;
   message: string;
 }
 
-export const ErrorAlert: React.FC<ErrorAlertProps> = ({ isVisible, message }) => {
-  if (!isVisible) return null;
+export const ErrorAlert: React.FC<ErrorAlertProps> = ({ 
+  open, 
+  onClose, 
+  message 
+}) => {
+  if (!open) return null;
 
   return (
     <Box
@@ -21,6 +26,15 @@ export const ErrorAlert: React.FC<ErrorAlertProps> = ({ isVisible, message }) =>
     >
       <Text fontWeight="bold" mb={1}>Error</Text>
       <Text>{message}</Text>
+      <Text 
+        position="absolute" 
+        top="4px" 
+        right="4px" 
+        cursor="pointer"
+        onClick={onClose}
+      >
+        ✕
+      </Text>
     </Box>
   );
 };

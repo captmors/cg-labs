@@ -9,19 +9,22 @@ const __dirname = path.dirname(__filename);
 const RootDir = path.join(__dirname, "../../");
 
 // Logging
-const logDir = path.join(RootDir, "logs");
-const frontendLogDir = path.join(logDir, "front");
-
-if (!fs.existsSync(frontendLogDir)) {
-  fs.mkdirSync(frontendLogDir, { recursive: true });
+const logDir = path.join(RootDir, "logs", "front");
+if (!fs.existsSync(logDir)) {
+  fs.mkdirSync(logDir, { recursive: true });
 }
 
-const frontendLog = fs.createWriteStream(
-  path.join(frontendLogDir, "electron.log"),
-  {
-    flags: "w",
-  }
-);
+const logFile = fs.createWriteStream(path.join(logDir, "electron.log"), {
+  flags: "w",
+});
+
+const log = (message) => {
+  const timestamp = new Date().toISOString();
+  logFile.write(`[${timestamp}] ${message}\n`);
+};
+
+process.stdout.write = logFile.write.bind(logFile);
+process.stderr.write = logFile.write.bind(logFile);
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
@@ -36,13 +39,13 @@ function createWindow() {
   if (isDev) {
     mainWindow.loadURL("http://localhost:5173");
   } else {
-    frontendLog.write(`[EL] Unsupported run mode\n`);
+    log(`Unsupported run mode`);
     app.quit();
   }
 }
 
 app.whenReady().then(() => {
-  frontendLog.write(`[EL] Electron started\n`);
+  log(`Electron started`);
   createWindow();
 
   app.on("activate", () => {
@@ -53,7 +56,7 @@ app.whenReady().then(() => {
 // Handle application exit
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
-    frontendLog.write(`[EL] Electron terminated\n`);
+    log(`Electron terminated`);
     app.quit();
   }
 });
