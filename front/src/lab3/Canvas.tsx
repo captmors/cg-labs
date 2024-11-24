@@ -9,8 +9,17 @@ interface CanvasProps {
   onReset?: () => void;
 }
 
-const Canvas: React.FC<CanvasProps> = ({ points, scale, origin, drawGrid, resetCanvas, onReset }) => {
+const Canvas: React.FC<CanvasProps> = ({
+  points,
+  scale,
+  origin,
+  drawGrid,
+  resetCanvas,
+  onReset,
+}) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [currentScale, setCurrentScale] = useState(scale);
+  const [currentOrigin, setCurrentOrigin] = useState(origin);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -18,103 +27,127 @@ const Canvas: React.FC<CanvasProps> = ({ points, scale, origin, drawGrid, resetC
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // Очистка канваса
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    // Установим цвет фона
     ctx.fillStyle = "white";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Рисование осей
     drawAxes(ctx);
 
-    // Рисование точек
+    if (drawGrid) drawGridLines(ctx);
     drawPoints(ctx, points);
-
-    // Рисование линий между точками
     drawLines(ctx, points);
 
-    // Рисование сетки
-    if (drawGrid) {
-      drawGridLines(ctx);
+    if (resetCanvas && onReset) onReset();
+  }, [points, resetCanvas, currentOrigin, currentScale, drawGrid]);
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    const step = 20; // шаг перемещения
+    switch (event.key) {
+      case "ArrowUp":
+        setCurrentOrigin((prev) => ({ ...prev, y: prev.y + step }));
+        break;
+      case "ArrowDown":
+        setCurrentOrigin((prev) => ({ ...prev, y: prev.y - step }));
+        break;
+      case "ArrowLeft":
+        setCurrentOrigin((prev) => ({ ...prev, x: prev.x + step }));
+        break;
+      case "ArrowRight":
+        setCurrentOrigin((prev) => ({ ...prev, x: prev.x - step }));
+        break;
+      default:
+        break;
     }
+  };
 
-    // Если сброс
-    if (resetCanvas && onReset) {
-      onReset();
-    }
-  }, [points, resetCanvas, origin, scale, drawGrid]);
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
-  const drawLines = (ctx: CanvasRenderingContext2D, points: { x: number; y: number }[]) => {
-    if (points.length < 2) return;
-
-    ctx.strokeStyle = "black"; 
-    ctx.lineWidth = 1;
-
-    // Проверка каждой точки
-    const isOutOfCanvas = (point: { x: number; y: number }) => {
-      const canvasX = point.x * scale + canvasRef.current!.width / 2;
-      const canvasY = -point.y * scale + canvasRef.current!.height / 2;
-      return canvasX < 0 || canvasX > ctx.canvas.width || canvasY < 0 || canvasY > ctx.canvas.height;
-    };
-
-    // Проверка всех точек
-    points.forEach((point, index) => {
-      if (isOutOfCanvas(point)) {
-        console.log(`Point out of canvas bounds: (${point.x}, ${point.y})`);
-      }
-    });
-
-    ctx.beginPath();
-    ctx.moveTo(points[0].x * scale + canvasRef.current!.width / 2, points[0].y * scale + canvasRef.current!.height / 2);
-    points.slice(1).forEach((point) => {
-      ctx.lineTo(point.x * scale + canvasRef.current!.width / 2, point.y * scale + canvasRef.current!.height / 2);
-    });
-    ctx.stroke();
+  const handleWheel = (event: React.WheelEvent) => {
+    event.preventDefault();
+    const zoomFactor = 1.1;
+  
+    // Определяем направление прокрутки
+    const delta = event.deltaY;
+    const newScale = delta < 0 ? currentScale * zoomFactor : currentScale / zoomFactor;
+  
+    // Центрирование для плавного зума
+    const mouseX = event.clientX - canvasRef.current!.offsetLeft;
+    const mouseY = event.clientY - canvasRef.current!.offsetTop;
+  
+    setCurrentOrigin((prev) => ({
+      x: (prev.x - mouseX) * (newScale / currentScale) + mouseX,
+      y: (prev.y - mouseY) * (newScale / currentScale) + mouseY,
+    }));
+    setCurrentScale(newScale);
   };
 
   const drawAxes = (ctx: CanvasRenderingContext2D) => {
     ctx.strokeStyle = "black";
     ctx.lineWidth = 1;
 
-    // Горизонтальная ось (ось X)
+    const centerX = currentOrigin.x + canvasRef.current!.width / 2;
+    const centerY = currentOrigin.y + canvasRef.current!.height / 2;
+
     ctx.beginPath();
-    ctx.moveTo(0, canvasRef.current!.height / 2);
-    ctx.lineTo(ctx.canvas.width, canvasRef.current!.height / 2);
+    ctx.moveTo(0, centerY);
+    ctx.lineTo(ctx.canvas.width, centerY);
     ctx.stroke();
 
-    // Вертикальная ось (ось Y)
     ctx.beginPath();
-    ctx.moveTo(canvasRef.current!.width / 2, 0);
-    ctx.lineTo(canvasRef.current!.width / 2, ctx.canvas.height);
+    ctx.moveTo(centerX, 0);
+    ctx.lineTo(centerX, ctx.canvas.height);
     ctx.stroke();
   };
 
   const drawPoints = (ctx: CanvasRenderingContext2D, points: { x: number; y: number }[]) => {
     points.forEach((point) => {
-      const canvasX = point.x * scale + canvasRef.current!.width / 2;
-      const canvasY = point.y * scale + canvasRef.current!.height / 2;
+      const canvasX =
+        point.x * currentScale + currentOrigin.x + canvasRef.current!.width / 2;
+      const canvasY =
+        -point.y * currentScale + currentOrigin.y + canvasRef.current!.height / 2;
       ctx.fillStyle = "black";
       ctx.beginPath();
-      ctx.arc(canvasX, canvasY, 0.8, 0, 2 * Math.PI);
+      ctx.arc(canvasX, canvasY, 2, 0, 2 * Math.PI);
       ctx.fill();
     });
   };
-  
+
+  const drawLines = (ctx: CanvasRenderingContext2D, points: { x: number; y: number }[]) => {
+    if (points.length < 2) return;
+
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 1;
+
+    ctx.beginPath();
+    ctx.moveTo(
+      points[0].x * currentScale + currentOrigin.x + canvasRef.current!.width / 2,
+      -points[0].y * currentScale + currentOrigin.y + canvasRef.current!.height / 2
+    );
+    points.slice(1).forEach((point) => {
+      ctx.lineTo(
+        point.x * currentScale + currentOrigin.x + canvasRef.current!.width / 2,
+        -point.y * currentScale + currentOrigin.y + canvasRef.current!.height / 2
+      );
+    });
+    ctx.stroke();
+  };
+
   const drawGridLines = (ctx: CanvasRenderingContext2D) => {
     ctx.strokeStyle = "#ddd";
     ctx.lineWidth = 0.5;
-    const gridStep = scale * 20;
-  
-    // Линии по оси X (горизонтальные)
-    for (let x = 0; x <= ctx.canvas.width; x += gridStep) {
+    const gridStep = currentScale * 20;
+
+    for (let x = currentOrigin.x % gridStep; x <= ctx.canvas.width; x += gridStep) {
       ctx.beginPath();
       ctx.moveTo(x, 0);
       ctx.lineTo(x, ctx.canvas.height);
       ctx.stroke();
     }
-  
-    // Линии по оси Y (вертикальные)
-    for (let y = 0; y <= ctx.canvas.height; y += gridStep) {
+
+    for (let y = currentOrigin.y % gridStep; y <= ctx.canvas.height; y += gridStep) {
       ctx.beginPath();
       ctx.moveTo(0, y);
       ctx.lineTo(ctx.canvas.width, y);
@@ -129,6 +162,7 @@ const Canvas: React.FC<CanvasProps> = ({ points, scale, origin, drawGrid, resetC
         width={600}
         height={600}
         style={{ border: "1px solid black", marginBottom: "20px" }}
+        onWheel={handleWheel}
       />
     </div>
   );

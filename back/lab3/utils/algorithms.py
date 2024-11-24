@@ -23,11 +23,14 @@ def bresenham_line(x1, y1, x2, y2):
     return points
 
 
-# Алгоритм ЦДА
 @log_execution_time
 def dda_algorithm(x1, y1, x2, y2):
     dx, dy = x2 - x1, y2 - y1
     steps = max(abs(dx), abs(dy))
+    
+    if steps == 0:
+        return [(x1, y1)]
+    
     x_inc, y_inc = dx / steps, dy / steps
     x, y = x1, y1
 
@@ -38,8 +41,7 @@ def dda_algorithm(x1, y1, x2, y2):
         y += y_inc
     return points
 
-
-# Алгоритм Брезенхема для окружности
+ 
 @log_execution_time
 def bresenham_circle(xc, yc, radius):
     x, y = 0, radius
@@ -61,7 +63,7 @@ def bresenham_circle(xc, yc, radius):
             d += 4 * x + 6
     return points
 
-
+ 
 @log_execution_time
 def step_algorithm(x1, y1, x2, y2):
     dx, dy = abs(x2 - x1), abs(y2 - y1)
