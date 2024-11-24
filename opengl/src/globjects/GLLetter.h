@@ -1,50 +1,32 @@
 #pragma once
+#include "GLObject.h"
 
-#include "GLComposite.h"
-#include "GLSphere.h"
-
-class GLLetter : public GLComposite {
+class GLLetter : public GLObject {
 private:
-    std::vector<GLSphere*> spheres;
+    struct BufferObjects {
+        unsigned int VAO{ 0 };
+        unsigned int VBO{ 0 };
+        unsigned int EBO{ 0 };
+        unsigned int normalVBO{ 0 };
+        unsigned int texcoordVBO{ 0 };
+    };
+
+    struct LetterGeometry {
+        std::vector<float> vertices;
+        std::vector<float> normals;
+        std::vector<float> texcoords;
+        std::vector<unsigned short> indices;
+    };
+
+    BufferObjects buffers;
+    unsigned int indexCount{ 0 };
+
+    void createBufferObject() override;
+    void createLetterBuffer();
+    void setupBuffers(const LetterGeometry& geometry);
 
 public:
-    GLLetter(Shader* shader, Texture* texture)
-        : GLComposite(shader, texture) {
-        createBufferObject();
-        shader->useSetTextureSampler(texture->getUnit());
-    }
-
-    ~GLLetter() override {
-        for (auto* sphere : spheres) {
-            delete sphere;
-        }
-    }
-
-    void draw() override {
-        shader->use();
-        texture->use();
-
-        for (auto* sphere : spheres) {
-            sphere->draw(); // (?) could draw with no use
-        }
-    }
-
-private:
-    void createBufferObject() override {
-        // Define the positions for spheres forming the letter "×"
-        std::vector<glm::vec3> positions = {
-            glm::vec3(-0.5f, 0.3f, 0.0f),
-            glm::vec3(-0.5f, 0.6f, 0.0f),
-            glm::vec3(-0.5f, 0.9f, 0.0f),
-            glm::vec3(0.5f, 0.3f, 0.0f),
-            glm::vec3(0.5f, 0.6f, 0.0f),
-            glm::vec3(0.0f, 0.3f, 0.0f),
-        };
-
-        // Create spheres at specified positions
-        for (const auto& pos : positions) {
-            GLSphere* sphere = new GLSphere(shader, texture);
-            spheres.push_back(sphere);
-        }
-    }
+    GLLetter(Shader* shader, Texture* texture);
+    ~GLLetter() override;
+    void draw() override;
 };

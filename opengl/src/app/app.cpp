@@ -9,13 +9,13 @@
 
 void initSceneObjects(AppState& app) {
     try {
-        // cube
-        auto* cube = new GLCube(
-            app.shaderManager->createShaderDefault("cube"),
-            app.textureManager->createTextureDefault("xfile")
+        // letter 
+        auto* letter = new GLLetter(
+            app.shaderManager->createShaderDefault("sphere"),
+            app.textureManager->createTextureDefault("sun")
         );
 
-        app.objects.push_back(cube);
+        app.objects.push_back(letter);
 
         // skybox
         app.skybox = new GLSkybox(

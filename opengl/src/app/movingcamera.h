@@ -13,7 +13,7 @@ public:
     float mouseSensitivity;
 
     MovingCamera() : cameraPos(0.0f, 0.0f, 0.0f), cameraFront(0.0f, 0.0f, -1.0f),
-        cameraSpeed(0.5f), yaw(0.0f), pitch(0.0f), mouseSensitivity(0.1f) {}
+        cameraSpeed(2.0f), yaw(0.0f), pitch(0.0f), mouseSensitivity(0.1f) {}
 
     void handleMouseDirection(int xrel, int yrel);
 
