@@ -1,9 +1,11 @@
 #pragma once
 
-#include "../managers/texture.h"
-#include "../managers/shader.h"
+#include "../glutils/shader.h"
+#include "../glutils/texture.h"
+#include "../utils/Movement.h"
 
-class GLObject {
+
+class GLObject : public SineMovement {
 public:
     Shader* shader;
     Texture* texture;

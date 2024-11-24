@@ -1,4 +1,11 @@
+## Реализации
+1,2,3 - back/lab1, back/lab3, back/lab3
+
+4 - opengl/
+
+## Установка 
 Из корня запустить следующее:
+
 1. 
 ```
 poetry config virtualenvs.path ./back/venv/

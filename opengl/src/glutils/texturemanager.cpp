@@ -80,11 +80,11 @@ Texture* TextureManager::createCubeboxDefault(const std::string& name)
 
     int width, height, nrChannels;
     stbi_set_flip_vertically_on_load(false);
-    unsigned char* data; 
+    unsigned char* data;
     for (unsigned int i = 0; i < 6; i++)
     {
         std::string texture_path = defaultCubeboxPath + std::string(name) + '_' + namePostfixes[i] + ".png";
-        data = nullptr; 
+        data = nullptr;
         data = stbi_load(texture_path.c_str(), &width, &height, &nrChannels, 0);
         if (data)
         {
